@@ -7,3 +7,6 @@ body .container-fluid {
 .collapse.navbar-collapse {
     justify-content: space-between;
 }
+.card {
+    padding: 15px;
+}

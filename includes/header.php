@@ -2,7 +2,7 @@
 ob_start();
 global $user;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  if(isset($_POST['userType'])){
+  if (isset($_POST['userType'])) {
     $user->setUserType($_POST['userType']);
   }
 }
@@ -10,7 +10,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Motueka B&B</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -51,9 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             foreach ($bookingOptions as $bookingOptionName => $bookingOptionValue) {
               $userType = $user->getUserType();
               if ($bookingOptionValue[$userType] == true) {
-                echo "<li><a class=\"dropdown-item\" href=";
-                echo $bookingOptionValue["URL"];
-                echo ">$bookingOptionName</a></li>";
+                echo "<li><a class=\"dropdown-item\" href=" . $bookingOptionValue["URL"] . ">$bookingOptionName</a></li>";
               }
             }
             echo "</ul></div>";
@@ -72,6 +71,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
   </div>
 </nav>
+<div class="card mx-3 mb-3 pb-0">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <?php
+      $longURL = "";
+      $route = array_filter($route);
+      foreach($route as $index => $crumb) {
+          $longURL .= $crumb . "/";
+          if ($index == count($route)) {
+            echo "<li class=\"breadcrumb-item active\">" . ucfirst($crumb) . "</li>";
+          } else {
+            echo "<li class=\"breadcrumb-item\"><a href=\"/$longURL\">" . ucfirst($crumb) . "</a></li>";
+          }
+      }
+      ?>
+    </ol>
+  </nav>
+</div>
 
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -82,11 +100,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
       <div class="modal-body" style="text-align: center;">
         <p>Login in as:</p>
-        <form role = "form" action = "<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" method = "post">
+        <form role="form" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" method="post">
           <select class="form-select" id="userType" name="userType">
-            <option <?php if ($userType == "Guest") { echo "selected"; } ?>>Guest</option>
-            <option <?php if ($userType == "Customer") { echo "selected"; } ?>>Customer</option>
-            <option <?php if ($userType == "Admin") { echo "selected"; } ?>>Admin</option>
+            <option <?php if ($userType == "Guest") {
+              echo "selected";
+            } ?>>Guest</option>
+            <option <?php if ($userType == "Customer") {
+              echo "selected";
+            } ?>>Customer</option>
+            <option <?php if ($userType == "Admin") {
+              echo "selected";
+            } ?>>Admin</option>
           </select>
           <button type="submit" class="btn btn-primary mt-3" data-bs-dismiss="modal">Login</button>
         </form>

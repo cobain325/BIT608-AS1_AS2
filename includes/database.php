@@ -10,4 +10,6 @@ $conn = new mysqli($servername, $username, $password, 'motueka');
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-$_SESSION['alertList']["Database Connected Successfully"] = array("type" => "success", "viewed" => 0);
+if(!isset($_SESSION['alertList']["Database Connected Successfully"])){
+    $_SESSION['alertList']["Database Connected Successfully"] = array("type" => "success", "viewed" => 0);
+} 

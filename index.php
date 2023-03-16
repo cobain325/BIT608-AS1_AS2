@@ -27,12 +27,14 @@ require_once "includes/database.php";
                     <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
                 </div>";
                 $_SESSION['alertList'][$alertMessage]['viewed']++;
-            } else {
-                unset($_SESSION['alertList'][$alertMessage]);
             }
         }
-        require_once "./includes/user.php";
-        $user = new User();
+        include "./includes/user.php";
+        if(!isset($_SESSION['user'])) {
+            $user = new User();
+        } else {
+            $user = unserialize($_SESSION['user']);
+        }
         include "includes/header.php";
         ?>
         <div class="container">
