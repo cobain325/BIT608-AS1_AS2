@@ -5,7 +5,7 @@ $rooms = mysqli_query($conn, "SELECT * FROM room");
 ?>
 <h4>Make a Booking</h4>
 <h5>Booking for
-    <?php echo $user->getUsername(); 
+    <?php echo $user->getCustomerName(); 
     echo $user->getUserID();
     ?>
 </h5>
@@ -26,14 +26,14 @@ $rooms = mysqli_query($conn, "SELECT * FROM room");
     </div>
     <div class="form-group">
         <label for="checkInDate">Checkin Date</label>
-        <input class="form-control" type="date" id="checkInDate" required />
+        <input class="form-control" id="checkInDate" required />
         <div class="invalid-feedback">
             Please choose a checkin date.
         </div>
     </div>
     <div class="form-group">
         <label for="checkoutDate">Checkout Date</label>
-        <input class="form-control" type="date" id="checkoutDate" required />
+        <input class="form-control" id="checkoutDate" required />
         <div class="invalid-feedback">
             Please choose a checkout date.
         </div>
@@ -54,6 +54,12 @@ $rooms = mysqli_query($conn, "SELECT * FROM room");
     </div>
 </form>
 <script>
+  $( function() {
+    $( "#checkInDate" ).datepicker({dateFormat: "dd-mm-yy"});
+  } );
+  $( function() {
+    $( "#checkoutDate" ).datepicker({dateFormat: "dd-mm-yy"});
+  } );
     const form = document.querySelector('.needs-validation')
     form.addEventListener('submit', event => {
             event.preventDefault()
@@ -75,8 +81,10 @@ $rooms = mysqli_query($conn, "SELECT * FROM room");
                     body: JSON.stringify({user: "<?php echo $user->getUserID(); ?>", room: roomSelect.value, checkInDate: checkInDate.value, checkoutDate: checkoutDate.value, contactNumber: contactNumber.value, extras: extras.value})
                 });
                 const content = await response.json();
-
-                console.log(content);
+                if(content.message == "success") {
+                    console.log(content)
+                    location.href = "/bookings/" + content.booking
+                }
             })();
         }
 

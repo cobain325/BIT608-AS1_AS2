@@ -61,11 +61,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ?>
       </div>
       <?php
-      $username = $user->getUsername();
-      if ($username == "Guest") {
+      $customerName = $user->getCustomerName();
+      if ($customerName == "Guest") {
         echo "<button class=\"btn btn-outline-success\" type=\"submit\" data-bs-toggle=\"modal\" data-bs-target=\"#loginModal\">Login</button>";
       } else {
-        echo "<span>$username</span>";
+        echo "<span>$customerName</span>";
       }
       ?>
     </div>

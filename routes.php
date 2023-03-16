@@ -4,10 +4,13 @@ require_once __DIR__ . '/router.php';
 
 post('/booking/created', function () {
     $_POST = json_decode(file_get_contents("php://input"), true);
-    var_dump($_POST);
     global $conn;
-    $booking = mysqli_query($conn, "INSERT INTO `booking`(`room`, `checkIn`, `checkOut`, `customer`, `contactNumber`, `extras`) VALUES ('" . $_POST['room'] . "','" . $_POST['checkInDate'] . "','".$_POST['checkoutDate']."','".$_POST['user']."','".$_POST['contactNumber']."','".$_POST['extras']."')");
-    http_response_code(404);
+    if (!$conn->query("INSERT INTO `booking`(`room`, `checkIn`, `checkOut`, `customer`, `contactNumber`, `extras`) VALUES ('" . $_POST['room'] . "','" . $_POST['checkInDate'] . "','" . $_POST['checkoutDate'] . "','" . $_POST['user'] . "','" . $_POST['contactNumber'] . "','" . $_POST['extras'] . "')")) {
+        die(json_encode($conn->error));
+    } else {
+        $_SESSION['alertList']["Booking Created Successfully"] = array("type" => "success", "viewed" => 0);
+        die(json_encode(array('message' => 'success', 'booking' => mysqli_insert_id($conn))));
+    }
 });
 
 get('/', function () {

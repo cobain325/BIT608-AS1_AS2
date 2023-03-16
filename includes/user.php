@@ -1,10 +1,14 @@
 <?php
 class User {
+    private $customerID;
     private $userType;
-    private $username;
+    private $firstname;
+    private $lastname;
+    private $email;
+    private $password;
 
-    function __construct($username = "Guest", $userType = "Guest") {
-        $this->username = $username;
+    function __construct($firstname = "Guest", $userType = "Guest") {
+        $this->firstname = $firstname;
         $this->userType = $userType;
         $_SESSION['user'] = serialize($this);
     }
@@ -12,8 +16,8 @@ class User {
     function getUserType(){
         return $this->userType;
     }
-    function getUsername(){
-        return $this->username;
+    function getCustomerName(){
+        return $this->firstname . $this->lastname;
     }
     function getUserID(){
         return 20;
