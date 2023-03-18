@@ -28,7 +28,7 @@
         if(isset($_SESSION['user'])) {
             $user = unserialize($_SESSION['user']);
         } else {
-            $user = new User();
+            $user = new User( );
         }
         include "includes/header.php";
         ?>
@@ -36,6 +36,7 @@
             <div class="card">
                 <?php
                 include "routes.php";
+                //ANYTHING BEYOND HERE IS NOT INCLUDED
                 ?>
             </div>
         </div>

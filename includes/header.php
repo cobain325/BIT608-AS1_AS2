@@ -132,3 +132,4 @@ if ($user->getUserType() == "Guest") {
 </script>
 <?php
 }
+?>
