@@ -1,11 +1,6 @@
 <?php
 ob_start();
 global $user;
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  if (isset($_POST['userType'])) {
-    $user->setUserType($_POST['userType']);
-  }
-}
 ?>
 <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
   <div class="container-fluid">
@@ -19,13 +14,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php
         $pages = array(
           "Home" => "/",
-          "Bookings" => "/bookings",
+        );
+        if ($user->getUserType() != "Guest") {
+          $pages += array(
+            "Bookings" => "/bookings"
+          );
+        }
+        $pages += array(
           "Rooms" => "/rooms",
           "About" => "/about",
           "Contact" => "/contact"
         );
         $bookingOptions = array(
-          "Create" => array("Guest" => true, "Customer" => true, "Admin" => true, "URL" => "/bookings/create"),
+          "Create" => array("Guest" => false, "Customer" => true, "Admin" => true, "URL" => "/bookings/create"),
           "View My Bookings" => array("Guest" => false, "Customer" => true, "Admin" => false, "URL" => "/bookings"),
           "List All Bookings" => array("Guest" => false, "Customer" => false, "Admin" => true, "URL" => "/bookings"),
         );
@@ -61,11 +62,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ?>
       </div>
       <?php
-      $customerName = $user->getCustomerName();
-      if ($customerName == "Guest") {
+      if ($user->getUserType() == "Guest") {
         echo "<button class=\"btn btn-outline-success\" type=\"submit\" data-bs-toggle=\"modal\" data-bs-target=\"#loginModal\">Login</button>";
       } else {
-        echo "<span>$customerName</span>";
+        echo "<div><span class=\"mx-2\">" . $user->getFirstName() . "</span><button class=\"btn btn-outline-success\" type=\"submit\" id=\"logout\" onclick=\"logoutConfirm()\">Logout</button></div>";
       }
       ?>
     </div>
@@ -78,43 +78,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <?php
       $longURL = "";
       $route = array_filter($route);
-      foreach($route as $index => $crumb) {
-          $longURL .= $crumb . "/";
-          if ($index == count($route)) {
-            echo "<li class=\"breadcrumb-item active\">" . ucfirst($crumb) . "</li>";
-          } else {
-            echo "<li class=\"breadcrumb-item\"><a href=\"/$longURL\">" . ucfirst($crumb) . "</a></li>";
-          }
+      foreach ($route as $index => $crumb) {
+        $longURL .= $crumb . "/";
+        if ($index == count($route)) {
+          echo "<li class=\"breadcrumb-item active\">" . ucfirst($crumb) . "</li>";
+        } else {
+          echo "<li class=\"breadcrumb-item\"><a href=\"/$longURL\">" . ucfirst($crumb) . "</a></li>";
+        }
       }
       ?>
     </ol>
   </nav>
 </div>
-
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+<div class="modal" id="logoutModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="loginModalLabel">Login</h1>
+        <h5 class="modal-title">Confirm Logout</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" style="text-align: center;">
-        <p>Login in as:</p>
-        <form role="form" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>" method="post">
-          <select class="form-select" id="userType" name="userType">
-            <option <?php if ($userType == "Guest") {
-              echo "selected";
-            } ?>>Guest</option>
-            <option <?php if ($userType == "Customer") {
-              echo "selected";
-            } ?>>Customer</option>
-            <option <?php if ($userType == "Admin") {
-              echo "selected";
-            } ?>>Admin</option>
-          </select>
-          <button type="submit" class="btn btn-primary mt-3" data-bs-dismiss="modal">Login</button>
-        </form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="logout()">Logout</button>
       </div>
     </div>
   </div>
 </div>
+<?php
+if ($user->getUserType() == "Guest") {
+  include "includes/helpers/loginModal.php";
+} else {
+?>
+<script>
+  function logoutConfirm(){
+    const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'))
+    logoutModal.show();
+  }
+  async function logout() {
+    const response = await fetch('/logout', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ user: <?php echo $user->getUserID() ?> })
+    });
+    const content = await response.json();
+    if (content.message == "success") {
+      console.log(content)
+      location.href = "<?php echo $_SERVER['REQUEST_URI'] ?>"
+    }
+  }
+</script>
+<?php
+}

@@ -1,30 +1,59 @@
 <?php
-class User {
+class User
+{
     private $customerID;
     private $userType;
     private $firstname;
     private $lastname;
     private $email;
-    private $password;
 
-    function __construct($firstname = "Guest", $userType = "Guest") {
-        $this->firstname = $firstname;
-        $this->userType = $userType;
-        $_SESSION['user'] = serialize($this);
+    function __construct($email = null, $password = null)
+    {
+        if ($email == null || $password == null) {
+            $this->customerID = null;
+            $this->userType = "Guest";
+            $this->firstname = "Guest";
+            $this->lastname = "";
+            $this->email = "";
+        } else {
+            global $conn;
+            $user = $conn->query('SELECT * FROM customer WHERE email = "' . $email . '"');
+            if ($user) {
+                $user = $user->fetch_assoc();
+                if (password_verify($password, $user['password'])) {
+                    $this->customerID = $user['customerID'];
+                    if ($user['customerID'] == 1) {
+                        $this->userType = "Admin";
+                    } else {
+                        $this->userType = "Customer";
+                    }
+                    $this->firstname = $user['firstname'];
+                    $this->lastname = $user['lastname'];
+                    $this->email = $user['email'];
+                    $_SESSION['user'] = serialize($this);
+                } else if ($password == $user['password']) {
+                    $conn->query('UPDATE customer SET password = "' . password_hash($password, PASSWORD_DEFAULT) . '" WHERE customerID = ' . $user['customerID']);
+                }
+            }
+        }
     }
 
-    function getUserType(){
+    function getUserType()
+    {
         return $this->userType;
     }
-    function getCustomerName(){
-        return $this->firstname . $this->lastname;
+    function getFirstName()
+    {
+        return $this->firstname;
     }
-    function getUserID(){
-        return 20;
+    function getCustomerName()
+    {
+        return $this->firstname . " " . $this->lastname;
     }
-    function setUserType($type){
-        $this->userType = $type;
-        $_SESSION['user'] = serialize($this);
+    function getUserID()
+    {
+        return $this->customerID;
+        ;
     }
 }
 ?>

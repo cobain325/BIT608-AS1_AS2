@@ -1,7 +1,6 @@
 <?php
 function get($route, $path_to_include){
   if( $_SERVER['REQUEST_METHOD'] == 'GET' ){ route($route, $path_to_include); }  
-  if( $_SERVER['REQUEST_METHOD'] == 'POST' ){ route($route, $path_to_include); } 
 }
 function post($route, $path_to_include){
   if( $_SERVER['REQUEST_METHOD'] == 'POST' ){ route($route, $path_to_include); }    

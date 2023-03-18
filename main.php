@@ -25,10 +25,10 @@
             }
         }
         include "./includes/user.php";
-        if(!isset($_SESSION['user'])) {
-            $user = new User();
-        } else {
+        if(isset($_SESSION['user'])) {
             $user = unserialize($_SESSION['user']);
+        } else {
+            $user = new User();
         }
         include "includes/header.php";
         ?>

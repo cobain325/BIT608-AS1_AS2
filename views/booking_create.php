@@ -1,15 +1,32 @@
 <?php
-global $user;
 global $conn;
+global $route;
+global $user;
+function isEditing() {
+    global $route;
+    if(!empty( $route[3] ) && $route[3] == 'edit'){
+        return true;
+    } else {
+        return false;
+    }
+}
 $rooms = mysqli_query($conn, "SELECT * FROM room");
+if (isEditing()) {
+    echo "<h4>Edit Booking</h4>";
+} else {
+    echo "<h4>Create Booking</h4>";
+}
 ?>
-<h4>Make a Booking</h4>
 <h5>Booking for
-    <?php echo $user->getCustomerName(); 
-    echo $user->getUserID();
+    <?php 
+    if (isEditing()) {
+        echo $booking['firstname']. " " . $booking['lastname'];
+    } else {
+        echo $user->getCustomerName();
+    }
     ?>
 </h5>
-<form class="needs-validation" novalidate>
+<form class="needs-validation" id="createForm" novalidate>
     <div class="form-group">
         <label for="roomSelect">Room (name, type, beds)</label>
         <select class="form-control" id="roomSelect" required>
@@ -25,8 +42,8 @@ $rooms = mysqli_query($conn, "SELECT * FROM room");
         </div>
     </div>
     <div class="form-group">
-        <label for="checkInDate">Checkin Date</label>
-        <input class="form-control" id="checkInDate" required />
+        <label for="checkinDate">Checkin Date</label>
+        <input class="form-control" id="checkinDate" required />
         <div class="invalid-feedback">
             Please choose a checkin date.
         </div>
@@ -48,46 +65,70 @@ $rooms = mysqli_query($conn, "SELECT * FROM room");
     <div class="form-group">
         <label for="extras">Extras</label>
         <textarea class="form-control" id="extras" rows="3"></textarea>
-        <div class=" row d-flex justify-content-center align-content-center ">
-            <button class="btn btn-primary mt-2 w-25" type="submit">Submit form</button>
+    </div>
+    <?php
+    if(isEditing()) {
+        ?>
+        <div class="form-group">
+            <label for="review">Review</label>
+            <textarea class="form-control" id="review" rows="3"></textarea>
         </div>
+        <?php
+    }
+    ?>
+    <div class="row d-flex justify-content-center align-content-center ">
+        <button class="btn btn-primary mt-2 w-25" type="submit">Submit form</button>
     </div>
 </form>
 <script>
-  $( function() {
-    $( "#checkInDate" ).datepicker({dateFormat: "dd-mm-yy"});
-  } );
-  $( function() {
-    $( "#checkoutDate" ).datepicker({dateFormat: "dd-mm-yy"});
-  } );
-    const form = document.querySelector('.needs-validation')
-    form.addEventListener('submit', event => {
-            event.preventDefault()
-        if (!form.checkValidity()) {
+    $(function () {
+        $("#checkinDate").datepicker({ dateFormat: "dd-mm-yy" });
+        $("#checkoutDate").datepicker({ dateFormat: "dd-mm-yy" });
+    });
+
+    const review = document.getElementById('review')
+    const roomSelect = document.getElementById('roomSelect')
+    const checkinDate = document.getElementById('checkinDate')
+    const checkoutDate = document.getElementById('checkoutDate')
+    const contactNumber = document.getElementById('contactNumber')
+    const extras = document.getElementById('extras')
+    const createForm = document.getElementById('createForm')
+    <?php
+    if (isEditing()) {
+        echo "roomSelect.value = \"" . $booking['room'] . "\";\n";
+        echo "$(function () {\n
+            var parsedCheckinDate = $.datepicker.parseDate('yy-mm-dd', \"".$booking['checkIn']."\");
+            var parsedCheckoutDate = $.datepicker.parseDate('yy-mm-dd', \"".$booking['checkOut']."\");
+            $(\"#checkinDate\").datepicker(\"setDate\", parsedCheckinDate );\n
+            $(\"#checkoutDate\").datepicker(\"setDate\", parsedCheckoutDate );\n
+        });\n";
+        echo "contactNumber.value = \"" . $booking['contactNumber'] . "\";\n";
+        echo "extras.value = \"" . $booking['extras'] . "\";\n";
+        echo "review.value = \"" . $booking['review'] . "\";\n";
+    }
+    ?>
+    createForm.addEventListener('submit', event => {
+        event.preventDefault()
+        if (!createForm.checkValidity()) {
             event.stopPropagation()
         } else {
             (async () => {
-                const roomSelect = document.getElementById('roomSelect')
-                const checkInDate = document.getElementById('checkInDate')
-                const checkoutDate = document.getElementById('checkoutDate')
-                const contactNumber = document.getElementById('contactNumber')
-                const extras = document.getElementById('extras')
-                const response = await fetch('/booking/created', { <?php //$_SERVER['SERVER_ADDR'] ?>
+                const response = await fetch('/booking/<?php echo isEditing() ? 'edit' : 'created' ?>', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({user: "<?php echo $user->getUserID(); ?>", room: roomSelect.value, checkInDate: checkInDate.value, checkoutDate: checkoutDate.value, contactNumber: contactNumber.value, extras: extras.value})
+                    body: JSON.stringify({<?php echo isEditing() ? "bookingID: \"".$booking['bookingID']."\", review: review.value, " : "" ?> user: "<?php echo $user->getUserID(); ?>", room: roomSelect.value, checkInDate: checkinDate.value, checkoutDate: checkoutDate.value, contactNumber: contactNumber.value, extras: extras.value})
                 });
                 const content = await response.json();
-                if(content.message == "success") {
+                if (content.message == "success") {
                     console.log(content)
                     location.href = "/bookings/" + content.booking
                 }
             })();
         }
 
-        form.classList.add('was-validated')
+        createForm.classList.add('was-validated')
     }, false)
 </script>
