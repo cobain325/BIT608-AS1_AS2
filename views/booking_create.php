@@ -3,7 +3,8 @@ global $conn;
 global $route;
 global $user;
 function isEditing() {
-    global $route;
+    $route = rtrim($_SERVER['REQUEST_URI'], '/');
+    $route = explode('/', $route);
     if(!empty( $route[3] ) && $route[3] == 'edit'){
         return true;
     } else {

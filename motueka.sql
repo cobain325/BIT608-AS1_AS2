@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 12, 2023 at 10:28 AM
+-- Generation Time: Mar 20, 2023 at 07:10 AM
 -- Server version: 8.0.31
 -- PHP Version: 8.2.0
 
@@ -38,6 +38,29 @@ CREATE TABLE `booking` (
   `review` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Dumping data for table `booking`
+--
+
+INSERT INTO `booking` (`bookingID`, `room`, `checkIn`, `checkOut`, `customer`, `contactNumber`, `extras`, `review`) VALUES
+(1, 2, '2023-03-16 14:00:00', '2023-03-30 10:00:00', 1, '123', '123456', ''),
+(2, 2, '2023-03-16 14:00:00', '2023-03-19 10:00:00', 1, '123', '123', ''),
+(3, 2, '2023-03-16 00:00:00', '2023-03-19 00:00:00', 20, '123', '', NULL),
+(4, 2, '2023-03-23 00:00:00', '2023-03-26 00:00:00', 20, '123', '', NULL),
+(5, 12, '2023-03-23 00:00:00', '2023-03-26 00:00:00', 20, '123', '', NULL),
+(6, 10, '2023-03-25 00:00:00', '2023-03-30 00:00:00', 20, '2313', 'rettrerg', NULL),
+(7, 10, '2023-03-25 00:00:00', '2023-03-30 00:00:00', 20, '2313', 'rettrerg', NULL),
+(8, 10, '2023-03-25 00:00:00', '2023-03-30 00:00:00', 20, '2313', 'rettrerg', NULL),
+(9, 8, '2023-03-17 00:00:00', '2023-03-30 00:00:00', 20, '56564', '', NULL),
+(10, 8, '2023-03-17 00:00:00', '2023-03-30 00:00:00', 20, '56564', '', NULL),
+(11, 8, '2023-03-17 00:00:00', '2023-03-30 00:00:00', 20, '56564', '', NULL),
+(12, 1, '2023-03-17 14:00:00', '2023-03-31 10:00:00', 2, '56564', '', ''),
+(13, 8, '2023-03-17 00:00:00', '2023-03-30 00:00:00', 20, '56564', '', NULL),
+(14, 2, '2023-03-17 00:00:00', '2023-04-01 00:00:00', 20, '12312', '', NULL),
+(15, 2, '2023-03-17 00:00:00', '2023-04-01 00:00:00', 20, '12312', '', NULL),
+(16, 13, '2023-02-08 00:00:00', '2023-03-31 00:00:00', 2, '123', '', NULL),
+(17, 7, '2023-03-20 14:00:00', '2023-03-23 10:00:00', 2, '55555', '', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -49,7 +72,7 @@ CREATE TABLE `customer` (
   `firstname` varchar(50) NOT NULL,
   `lastname` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `password` varchar(40) NOT NULL DEFAULT '.'
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '.'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -57,7 +80,8 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`customerID`, `firstname`, `lastname`, `email`, `password`) VALUES
-(2, 'Desiree', 'Collier', 'Maecenas@non.co.uk', '.'),
+(1, 'Admin', 'Admin', 'admin@admin.com', '$2y$10$WVUYPCAQIPAZRdvm4kLkqOStZomG2FKBAxoDMLLObcOhL.6s/O0NS'),
+(2, 'Desiree', 'Collier', 'Maecenas@non.co.uk', '$2y$10$w4UMhRjZNx8/0tSq/H/PIudsoJ3rzVNGCRP.eNvpwBf3tMrivpx4C'),
 (3, 'Irene', 'Walker', 'id.erat.Etiam@id.org', '.'),
 (4, 'Forrest', 'Baldwin', 'eget.nisi.dictum@a.com', '.'),
 (5, 'Beverly', 'Sellers', 'ultricies.sem@pharetraQuisqueac.co.uk', '.'),
@@ -72,7 +96,7 @@ INSERT INTO `customer` (`customerID`, `firstname`, `lastname`, `email`, `passwor
 (14, 'Buckminster', 'Gaines', 'convallis.convallis.dolor@ligula.co.uk', '.'),
 (15, 'Hunter', 'Rodriquez', 'ridiculus.mus.Donec@est.co.uk', '.'),
 (16, 'Zahir', 'Harper', 'vel@estNunc.com', '.'),
-(17, 'Sopoline', 'Warner', 'vestibulum.nec.euismod@sitamet.co.uk', '.'),
+(17, 'Sopoline', 'Warner', 'vestibulum.nec.euismod@sitamet.co.uk', '$2y$10$r2MSOV7aSWmCmmuryepzE.n66..056TMrLECunNYC4pmpkbBUUg.K'),
 (18, 'Burton', 'Parrish', 'consequat.nec.mollis@nequenonquam.org', '.'),
 (19, 'Abbot', 'Rose', 'non@et.ca', '.'),
 (20, 'Barry', 'Burks', 'risus@libero.net', '.');
@@ -141,7 +165,7 @@ ALTER TABLE `room`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `bookingID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `bookingID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `customer`

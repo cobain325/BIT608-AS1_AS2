@@ -1,6 +1,7 @@
 <?php
 global $user;
 global $conn;
+$bookingID = $routeParams['bookingID'];
 $booking = $conn->query("SELECT
 `booking`.`bookingID`,`booking`.`room`,`booking`.`checkIn`,`booking`.`checkOut`,`booking`.`customer`,`booking`.`contactNumber`,`booking`.`extras`,`booking`.`review`,`customer`.`customerID`,`customer`.`firstname`,`customer`.`lastname`,`customer`.`email`,`room`.`roomID`,`room`.`roomname`,`room`.`description`,`room`.`roomtype`,`room`.`beds`
 FROM

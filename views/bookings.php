@@ -27,9 +27,9 @@ if($bookings->num_rows > 0){
             <div>
                 <span>Booking #:" . $booking['bookingID'] . " | Check In: " . date("d/m/Y", strtotime($booking['checkIn'])) . " - Check Out: " . date("d/m/Y", strtotime($booking['checkOut'])) . "</span></div>
             <div>
-                <a class=\"btn btn-secondary\" href=\"/bookings/" . $booking['bookingID'] . "\" role=\"button\">View</a>
-                <a class=\"btn btn-info\" href=\"/bookings/" . $booking['bookingID'] . "/edit\" role=\"button\">Edit</a>
-                <a class=\"btn btn-warning\" href=\"/bookings/" . $booking['bookingID'] . "/delete\" role=\"button\">Delete</a>
+                <a class=\"btn btn-outline-secondary\" href=\"/bookings/" . $booking['bookingID'] . "\" role=\"button\">View</a>
+                <a class=\"btn btn-outline-info\" href=\"/bookings/" . $booking['bookingID'] . "/edit\" role=\"button\">Edit</a>
+                <a class=\"btn btn-outline-danger\" href=\"/bookings/" . $booking['bookingID'] . "/delete\" role=\"button\">Delete</a>
             </div>
         </li>";
     }
