@@ -118,7 +118,9 @@ $postRequests = array(
             $checkInDate_formated = date('Y-m-d H:i:s', $checkInDate);
             $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
             $checkoutDate_formated = date('Y-m-d H:i:s', $checkoutDate);
-            $result = $conn->query("SELECT * FROM room WHERE roomID NOT IN (SELECT room FROM booking WHERE checkIn >= '" . $checkInDate_formated . "' AND checkOut <= '" . $checkoutDate_formated . "')");
+            $bookingID = $_POST['bookingID'];
+            $result = $conn->query("SELECT * FROM room WHERE roomID NOT IN (SELECT room FROM booking WHERE checkIn >= '" . $checkInDate_formated . "' AND checkOut <= '" . $checkoutDate_formated . "') AND bookingID != '" . $bookingID . "'");
+
             if (
                 !$result
             ) {

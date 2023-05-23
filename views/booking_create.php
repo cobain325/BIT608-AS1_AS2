@@ -153,7 +153,7 @@ if (isEditing()) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({bookingID:$booking['bookingID'], checkInDate: checkinDate.value, checkoutDate: checkoutDate.value})
+            body: JSON.stringify({<?php echo isEditing() ? "bookingID: " . $booking['bookingID'] : "" ?>, checkInDate: checkinDate.value, checkoutDate: checkoutDate.value})
         });
         const content = await response.json();
         if (content.message == "success") {
