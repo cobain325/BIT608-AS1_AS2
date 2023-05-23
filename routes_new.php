@@ -96,6 +96,38 @@ $postRequests = array(
             }
         }
     ),
+    '/booking/delete' => array(
+        'name' => 'Booking Delete',
+        'function' => function () {
+            $_POST = json_decode(file_get_contents("php://input"), true);
+            global $conn;
+            if (!$conn->query("DELETE FROM `booking` WHERE `bookingID` = " . $_POST['bookingID'])) {
+                die(json_encode($conn->error));
+            } else {
+                $_SESSION['alertList']["Booking Deleted Successfully"] = array("type" => "success", "viewed" => 0);
+                die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
+            }
+        }
+    ),
+    '/booking/check' => array(
+        'name' => 'Booking Check Availability',
+        'function' => function () {
+            $_POST = json_decode(file_get_contents("php://input"), true);
+            global $conn;
+            $checkInDate = strtotime($_POST['checkInDate'] . " 14:00:00");
+            $checkInDate_formated = date('Y-m-d H:i:s', $checkInDate);
+            $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
+            $checkoutDate_formated = date('Y-m-d H:i:s', $checkoutDate);
+            $result = $conn->query("SELECT * FROM room WHERE roomID NOT IN (SELECT room FROM booking WHERE checkIn >= '" . $checkInDate_formated . "' AND checkOut <= '" . $checkoutDate_formated . "')");
+            if (
+                !$result
+            ) {
+                die(json_encode($conn->error));
+            } else {
+                die(json_encode(array('message' => 'success', 'result' => $result->fetch_all())));
+            }
+        }
+    ),
     '/login' => array(
         'name' => 'Login',
         'function' => function () {

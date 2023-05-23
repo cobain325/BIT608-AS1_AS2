@@ -11,6 +11,10 @@ function isEditing() {
         return false;
     }
 }
+
+?>
+<div class="card-header">
+<?php 
 $rooms = mysqli_query($conn, "SELECT * FROM room");
 if (isEditing()) {
     echo "<h4>Edit Booking</h4>";
@@ -18,7 +22,9 @@ if (isEditing()) {
     echo "<h4>Create Booking</h4>";
 }
 ?>
-<h5>Booking for
+</div>
+<div class="card-body">
+<h5 class="card-title" style="display: flex; justify-content: space-between;"><div>Booking for
     <?php 
     if (isEditing()) {
         echo $booking['firstname']. " " . $booking['lastname'];
@@ -26,22 +32,16 @@ if (isEditing()) {
         echo $user->getCustomerName();
     }
     ?>
-</h5>
-<form class="needs-validation" id="createForm" novalidate>
-    <div class="form-group">
-        <label for="roomSelect">Room (name, type, beds)</label>
-        <select class="form-control" id="roomSelect" required>
-            <option selected disabled value="">Please select a room</option>
-            <?php
-            foreach ($rooms as $room) {
-                echo "<option value=\"" . $room['roomID'] . "\">" . $room['roomname'] . ", " . $room['roomtype'] . ", " . $room['beds'] . "</option>";
-            }
-            ?>
-        </select>
-        <div class="invalid-feedback">
-            Please choose a room.
-        </div>
     </div>
+    <div>
+        <?php 
+    if (isEditing()) {
+        echo "<a class=\"btn btn-outline-danger\" href=\"/bookings/" . $booking['bookingID'] . "/delete\" role=\"button\">Delete Booking</a>";
+    } 
+    ?>
+    </div>
+</h5>
+<form class="needs-validation card-text" id="createForm" novalidate>
     <div class="form-group">
         <label for="checkinDate">Checkin Date</label>
         <input class="form-control" id="checkinDate" required />
@@ -54,6 +54,22 @@ if (isEditing()) {
         <input class="form-control" id="checkoutDate" required />
         <div class="invalid-feedback">
             Please choose a checkout date.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="roomSelect">Room (name, type, beds)</label>
+        </br>
+        <span>Available rooms for selected dates</span>
+        <select class="form-control" id="roomSelect" required>
+            <option selected disabled value="">Please select a room</option>
+            <?php
+            foreach ($rooms as $room) {
+                echo "<option value=\"" . $room['roomID'] . "\">" . $room['roomname'] . ", " . $room['roomtype'] . ", " . $room['beds'] . "</option>";
+            }
+            ?>
+        </select>
+        <div class="invalid-feedback">
+            Please choose a room.
         </div>
     </div>
     <div class="form-group">
@@ -81,6 +97,8 @@ if (isEditing()) {
         <button class="btn btn-primary mt-2 w-25" type="submit">Submit form</button>
     </div>
 </form>
+
+</div>
 <script>
     $(function () {
         $("#checkinDate").datepicker({ dateFormat: "dd-mm-yy" });
@@ -108,6 +126,50 @@ if (isEditing()) {
         echo "review.value = \"" . $booking['review'] . "\";\n";
     }
     ?>
+    $('#checkinDate').datepicker()
+    .on("input change",  event => {
+        event.preventDefault()
+        if ($('#checkoutDate').val() == "" || $('#checkinDate') == "") {
+            event.stopPropagation()
+        } else {
+            checkRoom();
+        }
+    })
+    $('#checkoutDate').datepicker()
+    .on("input change",  event => {
+        event.preventDefault()
+        if ($('#checkoutDate').val() == "" || $('#checkinDate') == "") {
+            event.stopPropagation()
+        } else {
+            checkRoom();
+        }
+    })
+    async function checkRoom(){
+        $('#roomSelect').empty();
+            $('#roomSelect').append($('<option selected disabled value="">Getting available rooms. Please wait...</option>'));
+        const response = await fetch('/booking/check', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({bookingID:$booking['bookingID'], checkInDate: checkinDate.value, checkoutDate: checkoutDate.value})
+        });
+        const content = await response.json();
+        if (content.message == "success") {
+            console.log(content)
+            $('#roomSelect').empty();
+            if(content.result.length > 0) {
+            $('#roomSelect').append($('<option selected disabled value="">Please select a room</option>'));
+            $.each(content.result, function(i, p) {
+                $('#roomSelect').append($('<option></option>').val(p[0]).html(p[1] + ", " + p[3] + ", " + p[4]));
+            });
+        } else {
+            $('#roomSelect').append($('<option selected disabled value="">No rooms available. Please select different dates.</option>'));
+        }
+        }
+    }
+
     createForm.addEventListener('submit', event => {
         event.preventDefault()
         if (!createForm.checkValidity()) {

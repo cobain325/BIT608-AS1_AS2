@@ -72,7 +72,7 @@ global $user;
   </div>
 </nav>
 <div class="card mx-3 mb-3 pb-0">
-  <nav aria-label="breadcrumb">
+  <nav class="breadcrumb-nav" aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="/">Home</a></li>
       <?php

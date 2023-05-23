@@ -3,7 +3,7 @@ global $title;
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $route = rtrim($_SERVER['REQUEST_URI'], '/');
     $getRequestsKeys = array_keys($getRequests);
-    $route_params = [];
+    $routeParams = [];
     foreach ($getRequestsKeys as $keyIndex => $getRequestKey) {
         $regexSearch = "";
         if ($route == $getRequestKey) {
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 document.title = "<?php echo $title ?>"
             </script>
             <?php
-            call_user_func($getRequests[$getRequestKey]['function'], $route_params);
+            call_user_func($getRequests[$getRequestKey]['function'], $routeParams);
             break;
         } else {
             $keyParts = explode('/', $getRequestKey);
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 if (preg_match("/^[$]/", $keyPart)) {
                     $regexSearch .= "(\/.*)";
                     if (count($keyParts) == count($routeParts)) {
-                        $route_params[ltrim($keyPart, '$')] = $routeParts[$index];
+                        $routeParams[ltrim($keyPart, '$')] = $routeParts[$index];
                     }
                 } else {
                     $regexSearch .= "(\/" . $keyPart . ")";
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                         document.title = "<?php echo $title ?>"
                     </script>
                     <?php
-                    call_user_func($getRequests[$getRequestKey]['function'], $route_params);
+                    call_user_func($getRequests[$getRequestKey]['function'], $routeParams);
                     break;
                 }
             } else {
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $route = rtrim($_SERVER['REQUEST_URI'], '/');
     $postRequestsKeys = array_keys($postRequests);
-    $route_params = [];
+    $routeParams = [];
     foreach ($postRequestsKeys as $keyIndex => $postRequestsKey) {
         $regexSearch = "";
         if ($route == $postRequestsKey) {
@@ -68,14 +68,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (preg_match("/^[$]/", $keyPart)) {
                     $regexSearch .= "(\/.*)";
                     if (count($keyParts) == count($routeParts)) {
-                        $route_params[ltrim($keyPart, '$')] = $routeParts[$index];
+                        $routeParams[ltrim($keyPart, '$')] = $routeParts[$index];
                     }
                 } else {
                     $regexSearch .= "(\/" . $keyPart . ")";
                 }
             if (preg_match('/^' . $regexSearch . '$/', $route)) {
                 if (count($routeParts) == count($keyParts)) {
-                    call_user_func($postRequests[$postRequestsKey]['function'], $route_params);
+                    call_user_func($postRequests[$postRequestsKey]['function'], $routeParams);
                     break;
                 }
             } else {

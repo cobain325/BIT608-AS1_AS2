@@ -1,5 +1,5 @@
-<nav class="navbar fixed-bottom bg-body-tertiary">
+<nav class="navbar footer bg-body-tertiary">
   <div class="container-fluid">
-    <a href="/privacy">Privacy Policy</a>
+    <a class="link-secondary" href="/privacy">Privacy Policy</a>
   </div>
 </nav>

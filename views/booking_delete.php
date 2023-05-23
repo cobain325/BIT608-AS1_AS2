@@ -10,6 +10,9 @@ LEFT JOIN `room` ON `booking`.`room` = `room`.`roomID`
 LEFT JOIN `customer` ON `booking`.`customer` = `customer`.`customerID`
 WHERE
 `booking`.`bookingID` =  " . $bookingID);
+            ?>
+            <div class="card-body">
+            <?php
 if ($booking) {
     if ($booking->num_rows > 0) {
         $booking = $booking->fetch_assoc();
@@ -25,8 +28,8 @@ if ($booking) {
             </ul>
             <h6>Are you sure you want to delete this booking?</h6>
             <div>
-                <button type="button" class="btn btn-outline-secondary">Cancel</button>
-                <button type="button" class="btn btn-outline-danger">Delete</button>
+                <button type="button" class="btn btn-outline-secondary" id="cancelButton">Cancel</button>
+                <button type="button" class="btn btn-outline-danger" id="deleteButton">Delete</button>
             </div>
             <?php
         } else {
@@ -53,3 +56,27 @@ if ($booking) {
     <?php
 }
 ?>
+</div>
+<script>
+    const deleteButton = document.getElementById("deleteButton")
+    const cancelButton = document.getElementById("cancelButton")
+
+    cancelButton.addEventListener("click", () => {
+        
+        location.href = "/bookings/" + <?php echo $booking['bookingID']?>;
+    })
+    deleteButton.addEventListener("click", async () => {
+        const response = await fetch('/booking/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({<?php echo "bookingID: ".$booking['bookingID']?>})
+                });
+                const content = await response.json();
+                if (content.message == "success") {
+                    location.href = "/bookings"
+                }
+    })
+</script>

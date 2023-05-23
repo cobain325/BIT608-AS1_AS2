@@ -4,9 +4,13 @@ body .container-fluid {
 .navbar {
     padding: 15px;
 }
-.collapse.navbar-collapse {
+nav.breadcrumb-nav {
+    margin-top: 15px;
+    margin-left: 15px;
+}
+.navbar-collapse {
     justify-content: space-between;
 }
-.card {
-    padding: 15px;
+.main {
+    min-height: calc(100vh - 216px);
 }

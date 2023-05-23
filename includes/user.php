@@ -32,7 +32,20 @@ class User
                     $this->email = $user['email'];
                     $_SESSION['user'] = serialize($this);
                 } else if ($password == $user['password']) {
+
+                // Override to change existing db customers to hashed passwords
+                // All hashed passwords are set to "test"
                     $conn->query('UPDATE customer SET password = "' . password_hash($password, PASSWORD_DEFAULT) . '" WHERE customerID = ' . $user['customerID']);
+                    $this->customerID = $user['customerID'];
+                    if ($user['customerID'] == 1) {
+                        $this->userType = "Admin";
+                    } else {
+                        $this->userType = "Customer";
+                    }
+                    $this->firstname = $user['firstname'];
+                    $this->lastname = $user['lastname'];
+                    $this->email = $user['email'];
+                    $_SESSION['user'] = serialize($this);
                 }
             }
         }
