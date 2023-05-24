@@ -12,6 +12,7 @@ try {
 } catch (Exception $e) {
     echo "Service unavailable";
     print($e);
+    var_dump($e);
     exit;
 }
 if (!isset($_SESSION['alertList']["Database Connected Successfully"])) {
