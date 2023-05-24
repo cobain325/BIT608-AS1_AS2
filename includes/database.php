@@ -1,7 +1,7 @@
 <?php
-$servername = "127.0.0.1";
-$username = "root";
-$password = "root";
+$servername = "bit608-server.mysql.database.azure.com";
+$username = "haffxpeibm";
+$password = "H15N8Z0FFM4CUY6M";
 
 // Create connection
 try {
