@@ -115,15 +115,38 @@ $postRequests = array(
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
             $checkInDate = strtotime($_POST['checkInDate'] . " 14:00:00");
-            $checkInDate_formated = date('Y-m-d H:i:s', $checkInDate);
+            $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
             $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
-            $checkoutDate_formated = date('Y-m-d H:i:s', $checkoutDate);
-            $bookingID = $_POST['bookingID'];
-            $result = $conn->query("SELECT * FROM room WHERE roomID NOT IN (SELECT room FROM booking WHERE checkIn >= '" . $checkInDate_formated . "' AND checkOut <= '" . $checkoutDate_formated . "') AND bookingID != '" . $bookingID . "'");
-
-            if (
-                !$result
-            ) {
+            $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
+            $editing = false;
+            $bookingID = '';
+            if(array_key_exists('bookingID', $_POST)){
+                global $editing;
+                $editing = true;
+                $bookingID = $_POST['bookingID'];
+            }
+            $query = "SELECT *
+                      FROM room
+                      WHERE roomID NOT IN (
+                          SELECT room
+                          FROM booking
+                          WHERE (checkIn >= '$checkInDate_formatted'
+                          AND checkOut <= '$checkoutDate_formatted')
+                          OR (checkIn < '$checkoutDate_formatted'
+                          AND checkOut > '$checkInDate_formatted')
+                      ) ";
+            if($editing) {
+                $query .= "
+                OR roomID IN (
+                    SELECT room
+                    FROM booking
+                    WHERE bookingID = '$bookingID'
+                )";
+            }
+        
+            $result = $conn->query($query);
+        
+            if (!$result) {
                 die(json_encode($conn->error));
             } else {
                 die(json_encode(array('message' => 'success', 'result' => $result->fetch_all())));
