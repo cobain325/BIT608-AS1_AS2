@@ -56,5 +56,5 @@ jobs:
         with:
           app-name: 'BIT608'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C5D86C5D2AF245D6BD3300F8675BED4B }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D836ED1B52B14732B0D4897F1BD53942 }}
           package: .
