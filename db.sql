@@ -36,7 +36,7 @@ CREATE TABLE `booking` (
   `contactNumber` varchar(255) NOT NULL,
   `extras` varchar(255) DEFAULT NULL,
   `review` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `booking`
@@ -88,7 +88,7 @@ CREATE TABLE `customer` (
   `lastname` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '.'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `customer`
@@ -128,7 +128,7 @@ CREATE TABLE `room` (
   `description` text,
   `roomtype` char(1) DEFAULT 'D',
   `beds` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `room`
