@@ -29,7 +29,5 @@ Options +ExecCGI +FollowSymLinks
 #Require valid-user
 
 RewriteEngine On
-#RewriteCond %{REQUEST_METHOD} !=POST
-RewriteCond %{REQUEST_URI} !/includes/helpers/booking_create.php$
 RewriteCond %{REQUEST_URI}  !(\.png|\.jpg|\.webp|\.gif|\.jpeg|\.zip|\.css|\.svg|\.js|\.pdf)$
 RewriteRule (.*) index.php [QSA,L]
