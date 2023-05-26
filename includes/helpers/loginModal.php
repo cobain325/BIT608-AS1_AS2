@@ -54,10 +54,9 @@
         });
         const content = await response.json();
         if (content.message == "success") {
-          //location.href = location
-          console.log(content)
+          location.href = location
+          $_SESSION['alertList']["Successfully logged in."] = array("type" => "success", "viewed" => 0);
         } else if(content.message == "error") {
-          console.log(content)
           loginModal.show();
           document.getElementById('loginFailure').classList.remove('d-none')
         }
