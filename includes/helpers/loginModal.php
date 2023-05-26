@@ -54,7 +54,8 @@
         });
         const content = await response.json();
         if (content.message == "success") {
-          location.href = location
+          //location.href = location
+          console.log(content)
           $_SESSION['alertList']["Successfully logged in."] = array("type" => "success", "viewed" => 0);
         } else if(content.message == "error") {
           loginModal.show();

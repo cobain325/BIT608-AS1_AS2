@@ -203,7 +203,7 @@ $postRequests = array(
             if ($user->getUserType() != null) {
                 die(json_encode(array('message' => 'success', 'user' => $user)));
             } else {
-                die(json_encode(array('message' => 'fail', 'user' => $user)));
+                die(json_encode(array('message' => 'fail')));
             }
         }
     ),
