@@ -60,6 +60,9 @@ class User
                     $this->email = $user['email'];
                     $_SESSION['user'] = serialize($this);
                 }
+                else {
+                    $this->status = 'Invalid Password';
+                }
             } else {
                 $this->status = $conn->error;
             }
