@@ -135,10 +135,8 @@ if($user->getUserType() == "Guest") {
         echo "review.value = \"" . $booking['review'] . "\";\n";
     } else {
         echo '
-        var tomorrow = new Date();\n
-        tomorrow.setDate(tomorrow.getDate() + 1);\n
         $("#checkinDate").datepicker( "option", "minDate", new Date() );
-        $("#checkoutDate").datepicker( "option", "minDate", tomorrow );
+        $("#checkoutDate").datepicker( "option", "minDate", 1 );
         ';
     }
     ?>
