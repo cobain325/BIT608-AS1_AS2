@@ -68,11 +68,15 @@ $postRequests = array(
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
             $checkInDate = strtotime($_POST['checkInDate'] . " 14:00:00");
-            $checkInDate_formated = date('Y-m-d H:i:s', $checkInDate);
+            $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
             $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
-            $checkoutDate_formated = date('Y-m-d H:i:s', $checkoutDate);
-            if (!$conn->query("INSERT INTO `booking`(`room`, `checkIn`, `checkOut`, `customer`, `contactNumber`, `extras`) VALUES ('" . $_POST['room'] . "','" . $checkInDate_formated . "','" . $checkoutDate_formated . "','" . $_POST['user'] . "','" . $_POST['contactNumber'] . "','" . $_POST['extras'] . "')")) {
-                die(json_encode($conn->error));
+            $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
+
+            $query = "INSERT INTO `booking`(`room`, `checkIn`, `checkOut`, `customer`, `contactNumber`, `extras`) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("ssssss", $_POST['room'], $checkInDate_formatted, $checkoutDate_formatted, $_POST['user'], $_POST['contactNumber'], $_POST['extras']);
+            if (!$stmt->execute()) {
+                die(json_encode(array('message' => 'error', 'error' => $stmt->error)));
             } else {
                 $_SESSION['alertList']["Booking Created Successfully"] = array("type" => "success", "viewed" => 0);
                 die(json_encode(array('message' => 'success', 'booking' => mysqli_insert_id($conn))));
@@ -85,15 +89,33 @@ $postRequests = array(
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
             $checkInDate = strtotime($_POST['checkInDate'] . " 14:00:00");
-            $checkInDate_formated = date('Y-m-d H:i:s', $checkInDate);
+            $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
             $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
-            $checkoutDate_formated = date('Y-m-d H:i:s', $checkoutDate);
-            if (!$conn->query("UPDATE `booking` SET `room`='" . $_POST['room'] . "', `checkIn`='" . $checkInDate_formated . "',`checkOut`='" . $checkoutDate_formated . "',`customer`='" . $_POST['user'] . "', `contactNumber`='" . $_POST['contactNumber'] . "',`extras`='" . $_POST['extras'] . "',`review`='" . $_POST['review'] . "' WHERE `bookingID` = '" . $_POST['bookingID'] . "'")) {
-                die(json_encode($conn->error));
-            } else {
-                $_SESSION['alertList']["Booking Updated Successfully"] = array("type" => "success", "viewed" => 0);
-                die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
+            $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
+
+            $stmt = $conn->prepare("UPDATE `booking` SET `room`=?, `checkIn`=?, `checkOut`=?, `customer`=?, `contactNumber`=?, `extras`=?, `review`=? WHERE `bookingID` = ?");
+            if (!$stmt) {
+                die(json_encode(array('message' => 'error', 'error' => $conn->error)));
             }
+
+            $stmt->bind_param(
+                "sssssssi",
+                $_POST['room'],
+                $checkInDate_formatted,
+                $checkoutDate_formatted,
+                $_POST['user'],
+                $_POST['contactNumber'],
+                $_POST['extras'],
+                $_POST['review'],
+                $_POST['bookingID']
+            );
+
+            if (!$stmt->execute()) {
+                die(json_encode(array('message' => 'error', 'error' => $stmt->error)));
+            }
+
+            $_SESSION['alertList']["Booking Updated Successfully"] = array("type" => "success", "viewed" => 0);
+            die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
         }
     ),
     '/booking/delete' => array(
@@ -101,8 +123,11 @@ $postRequests = array(
         'function' => function () {
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
-            if (!$conn->query("DELETE FROM `booking` WHERE `bookingID` = " . $_POST['bookingID'])) {
-                die(json_encode($conn->error));
+            $query = "DELETE FROM `booking` WHERE `bookingID` = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("i", $_POST['bookingID']);
+            if (!$stmt->execute()) {
+                die(json_encode(array('message' => 'error', 'error' => $stmt->error)));
             } else {
                 $_SESSION['alertList']["Booking Deleted Successfully"] = array("type" => "success", "viewed" => 0);
                 die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
@@ -114,40 +139,54 @@ $postRequests = array(
         'function' => function () {
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
+
             $checkInDate = strtotime($_POST['checkInDate'] . " 14:00:00");
             $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
             $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
             $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
+
             $editing = false;
             $bookingID = '';
-            if(array_key_exists('bookingID', $_POST)){
+
+            if (array_key_exists('bookingID', $_POST)) {
                 global $editing;
                 $editing = true;
                 $bookingID = $_POST['bookingID'];
             }
+
             $query = "SELECT *
                       FROM room
                       WHERE roomID NOT IN (
                           SELECT room
                           FROM booking
-                          WHERE (checkIn >= '$checkInDate_formatted'
-                          AND checkOut <= '$checkoutDate_formatted')
-                          OR (checkIn < '$checkoutDate_formatted'
-                          AND checkOut > '$checkInDate_formatted')
+                          WHERE (checkIn >= ? AND checkOut <= ?)
+                          OR (checkIn < ? AND checkOut > ?)
                       ) ";
-            if($editing) {
-                $query .= "
-                OR roomID IN (
-                    SELECT room
-                    FROM booking
-                    WHERE bookingID = '$bookingID'
-                )";
+
+            $parameters = array($checkInDate_formatted, $checkoutDate_formatted, $checkoutDate_formatted, $checkInDate_formatted);
+            $typeDefinition = 'ssss';
+            if ($editing) {
+                $query .= " OR roomID IN (
+                                SELECT room
+                                FROM booking
+                                WHERE bookingID = ?
+                            )";
+                $parameters[] = $bookingID;
+                $typeDefinition .= 'i';
             }
-        
-            $result = $conn->query($query);
-        
+
+            $stmt = $conn->prepare($query);
+
+            if (!$stmt) {
+                die(json_encode(array('message' => 'error', 'error' => $stmt->error)));
+            }
+
+            $stmt->bind_param($typeDefinition, ...$parameters);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
             if (!$result) {
-                die(json_encode($conn->error));
+                die(json_encode(array('message' => 'error', 'error' => $conn->error)));
             } else {
                 die(json_encode(array('message' => 'success', 'result' => $result->fetch_all())));
             }

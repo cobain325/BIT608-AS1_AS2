@@ -12,7 +12,13 @@ function isEditing()
         return false;
     }
 }
-
+if($user->getUserType() == "Guest") {
+    ?><div class="alert alert-danger" role="alert">
+        Please login first.
+    </div><script>
+        loginModal.show();</script>
+        <?php
+} else {
 ?>
 <div class="card-header">
     <?php
@@ -191,8 +197,10 @@ function isEditing()
             });
             const content = await response.json();
             if (content.message == "success") {
-                console.log(content)
                 location.href = "/bookings/" + content.booking
+            } else {
+                //add error handling.
+                console.log(content)
             }
         })();
         }
@@ -200,3 +208,6 @@ function isEditing()
     createForm.classList.add('was-validated')
     }, false)
 </script>
+<?php 
+}
+?>

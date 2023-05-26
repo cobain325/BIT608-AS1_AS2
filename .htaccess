@@ -1,3 +1,6 @@
+# NOT USED IN PRODUCTION 
+# EDIT NGINX FILES ON HOST TO CONFIGURE RULES
+
 #------------------------------------------------------------------------------
 # Server root folder www .htaccess
 # This file provides server security limiting access to the localhost only.

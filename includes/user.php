@@ -17,9 +17,14 @@ class User
             $this->email = "";
         } else {
             global $conn;
-            $user = $conn->query('SELECT * FROM customer WHERE email = "' . $email . '"');
-            if ($user) {
-                $user = $user->fetch_assoc();
+            $query = "SELECT * FROM customer WHERE email = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result && $result->num_rows > 0) {
+                $user = $result->fetch_assoc();
                 if (password_verify($password, $user['password'])) {
                     $this->customerID = $user['customerID'];
                     if ($user['customerID'] == 1) {
@@ -32,10 +37,14 @@ class User
                     $this->email = $user['email'];
                     $_SESSION['user'] = serialize($this);
                 } else if ($password == $user['password']) {
-
-                // Override to change existing db customers to hashed passwords
-                // All hashed passwords are set to "test"
-                    $conn->query('UPDATE customer SET password = "' . password_hash($password, PASSWORD_DEFAULT) . '" WHERE customerID = ' . $user['customerID']);
+                    // Override to change existing db customers to hashed passwords
+                    // All hashed passwords are set to "."
+                    $query = "UPDATE customer SET password = ? WHERE customerID = ?";
+                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("si", $hashedPassword, $user['customerID']);
+                    $stmt->execute();
+                    
                     $this->customerID = $user['customerID'];
                     if ($user['customerID'] == 1) {
                         $this->userType = "Admin";
@@ -55,18 +64,20 @@ class User
     {
         return $this->userType;
     }
+
     function getFirstName()
     {
         return $this->firstname;
     }
+
     function getCustomerName()
     {
         return $this->firstname . " " . $this->lastname;
     }
+
     function getUserID()
     {
         return $this->customerID;
-        ;
     }
 }
 ?>

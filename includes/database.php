@@ -10,7 +10,6 @@ try {
     mysqli_real_connect($conn, $servername, $username, $password, 'motueka', 3306, MYSQLI_CLIENT_SSL);
 } catch (Exception $e) {
     echo "Service unavailable \n";
-    var_dump($e);
     exit;
 }
 if (!isset($_SESSION['alertList']["Database Connected Successfully"])) {
