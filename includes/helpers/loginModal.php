@@ -56,7 +56,6 @@
         if (content.message == "success") {
           //location.href = location
           console.log(content)
-          $_SESSION['alertList']["Successfully logged in."] = array("type" => "success", "viewed" => 0);
         } else if(content.message == "error") {
           loginModal.show();
           document.getElementById('loginFailure').classList.remove('d-none')

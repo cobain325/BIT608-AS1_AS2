@@ -201,6 +201,7 @@ $postRequests = array(
             $password = $_POST['password'];
             $user = new User($email, $password);
             if ($user->getUserType() != null) {
+                $_SESSION['alertList']["Successfully logged in."] = array("type" => "success", "viewed" => 0);
                 die(json_encode(array('message' => 'success', 'user' => $user)));
             } else {
                 die(json_encode(array('message' => 'fail')));
