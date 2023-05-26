@@ -52,14 +52,14 @@ if($user->getUserType() == "Guest") {
     <form class="needs-validation card-text" id="createForm" novalidate>
         <div class="form-group">
             <label for="checkinDate">Checkin Date</label>
-            <input class="form-control" id="checkinDate" required />
+            <input class="form-control" id="checkinDate" autocomplete="off" required />
             <div class="invalid-feedback">
                 Please choose a checkin date.
             </div>
         </div>
         <div class="form-group">
             <label for="checkoutDate">Checkout Date</label>
-            <input class="form-control" id="checkoutDate" required />
+            <input class="form-control" id="checkoutDate" autocomplete="off" required />
             <div class="invalid-feedback">
                 Please choose a checkout date.
             </div>
@@ -109,8 +109,8 @@ if($user->getUserType() == "Guest") {
 </div>
 <script>
     $(function () {
-        $("#checkinDate").datepicker({ dateFormat: "dd-mm-yy" });
-        $("#checkoutDate").datepicker({ dateFormat: "dd-mm-yy" });
+        $("#checkinDate").datepicker({ dateFormat: "dd-mm-yy"});
+        $("#checkoutDate").datepicker({ dateFormat: "dd-mm-yy"});
     });
 
     const review = document.getElementById('review')
@@ -133,6 +133,13 @@ if($user->getUserType() == "Guest") {
         echo "contactNumber.value = \"" . $booking['contactNumber'] . "\";\n";
         echo "extras.value = \"" . $booking['extras'] . "\";\n";
         echo "review.value = \"" . $booking['review'] . "\";\n";
+    } else {
+        echo '
+        var tomorrow = new Date();\n
+        tomorrow.setDate(tomorrow.getDate() + 1);\n
+        $("#checkinDate").datepicker( "option", "minDate", new Date() );
+        $("#checkoutDate").datepicker( "option", "minDate", tomorrow );
+        ';
     }
     ?>
     $('#checkinDate').datepicker()
