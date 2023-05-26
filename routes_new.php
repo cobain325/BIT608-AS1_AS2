@@ -204,7 +204,7 @@ $postRequests = array(
                 $_SESSION['alertList']["Successfully logged in."] = array("type" => "success", "viewed" => 0);
                 die(json_encode(array('message' => 'success', 'user' => $user->getCustomerName())));
             } else {
-                die(json_encode(array('message' => 'fail', 'user' => $user->getUserStatus())));
+                die(json_encode(array('message' => 'error', 'user' => $user->getUserStatus())));
             }
         }
     ),
