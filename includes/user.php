@@ -6,6 +6,7 @@ class User
     private $firstname;
     private $lastname;
     private $email;
+    private $status;
 
     function __construct($email = null, $password = null)
     {
@@ -19,13 +20,16 @@ class User
             global $conn;
             $query = "SELECT * FROM customer WHERE email = ?";
             $stmt = $conn->prepare($query);
+            if (!$stmt) {
+                $this->status = $stmt->error;
+            }
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
             
             if ($result && $result->num_rows > 0) {
                 $user = $result->fetch_assoc();
-                if (password_verify($password, $user['password'])) {
+                 if (password_verify($password, $user['password'])) {
                     $this->customerID = $user['customerID'];
                     if ($user['customerID'] == 1) {
                         $this->userType = "Admin";
@@ -56,6 +60,8 @@ class User
                     $this->email = $user['email'];
                     $_SESSION['user'] = serialize($this);
                 }
+            } else {
+                $this->status = $conn->error;
             }
         }
     }
