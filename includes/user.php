@@ -84,6 +84,10 @@ class User
     function getUserID()
     {
         return $this->customerID;
+    }   
+    function getUserStatus()
+    {
+        return $this->status;
     }
 }
 ?>

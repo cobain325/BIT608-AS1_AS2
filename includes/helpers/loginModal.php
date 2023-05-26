@@ -54,8 +54,7 @@
         });
         const content = await response.json();
         if (content.message == "success") {
-          //location.href = location
-          console.log(content)
+          location.href = location
         } else if(content.message == "error") {
           loginModal.show();
           document.getElementById('loginFailure').classList.remove('d-none')

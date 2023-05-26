@@ -200,11 +200,11 @@ $postRequests = array(
             $email = $_POST['email'];
             $password = $_POST['password'];
             $user = new User($email, $password);
-            if ($user->getUserType() != null) {
+            if ($user->getUserStatus() == null) {
                 $_SESSION['alertList']["Successfully logged in."] = array("type" => "success", "viewed" => 0);
-                die(json_encode(array('message' => 'success', 'user' => $user)));
+                die(json_encode(array('message' => 'success', 'user' => $user->getCustomerName())));
             } else {
-                die(json_encode(array('message' => 'fail', 'user' => $user)));
+                die(json_encode(array('message' => 'fail', 'user' => $user->getUserStatus())));
             }
         }
     ),
