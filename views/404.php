@@ -1,2 +1,3 @@
-<?php
-echo "Page not found.";
+<div class="card-text">
+    <strong>Page not found.</strong>
+</div>

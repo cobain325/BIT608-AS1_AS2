@@ -22,7 +22,6 @@ if($bookings->num_rows > 0){
 <ul class="list-group">
     <?php
     foreach ($bookings as $booking) {
-        //TODO: css classes with better breakpoints
         echo "
         <li class=\"list-group-item\">
             <div class=\"row\">

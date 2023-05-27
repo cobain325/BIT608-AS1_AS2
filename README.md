@@ -1,11 +1,10 @@
 # BIT608-AS1_AS2
 TODO:
-Data sanitization
 Customer Registration
 
 KNOWN ISSUES:
-
-
+Date formatting on jquery datepicker.
+Past bookings can be edited.
 
 NOTES:
 
