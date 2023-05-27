@@ -13,6 +13,7 @@ try {
     mysqli_real_connect($conn, $servername, $username, $password, $database, $port, MYSQLI_CLIENT_SSL);
 } catch (Exception $e) {
     echo "Service unavailable \n";
+    var_dump($e);
     exit;
 }
 if (!isset($_SESSION['alertList']["Database Connected Successfully"])) {
