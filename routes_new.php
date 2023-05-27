@@ -101,49 +101,64 @@ $postRequests = array(
         'function' => function () {
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
-            $checkInDate = strtotime($_POST['checkInDate']);
-            $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
-            $checkoutDate = strtotime($_POST['checkoutDate']);
-            $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
+            require_once 'includes/user.php';
+            $user = unserialize($_SESSION['user']);
+            $auth = $user->checkAuth();
+            if ($auth) {
+                $checkInDate = strtotime($_POST['checkInDate']);
+                $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
+                $checkoutDate = strtotime($_POST['checkoutDate']);
+                $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
 
-            $stmt = $conn->prepare("UPDATE `booking` SET `room`=?, `checkIn`=?, `checkOut`=?, `customer`=?, `contactNumber`=?, `extras`=?, `review`=? WHERE `bookingID` = ?");
-            if (!$stmt) {
-                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
+                $stmt = $conn->prepare("UPDATE `booking` SET `room`=?, `checkIn`=?, `checkOut`=?, `customer`=?, `contactNumber`=?, `extras`=?, `review`=? WHERE `bookingID` = ?");
+                if (!$stmt) {
+                    die(json_encode(array('message' => 'error', 'error' => "Database Error")));
+                }
+
+                $stmt->bind_param(
+                    "sssssssi",
+                    $_POST['room'],
+                    $checkInDate_formatted,
+                    $checkoutDate_formatted,
+                    $_POST['user'],
+                    $_POST['contactNumber'],
+                    $_POST['extras'],
+                    $_POST['review'],
+                    $_POST['bookingID']
+                );
+
+                if (!$stmt->execute()) {
+                    die(json_encode(array('message' => 'error', 'error' => "Database Error")));
+                }
+
+                $_SESSION['alertList']["Booking Updated Successfully"] = array("type" => "success", "viewed" => 0);
+                die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
+
+            } else {
+                die(json_encode(array('message' => 'error', 'error' => "Not Authorized")));
             }
-
-            $stmt->bind_param(
-                "sssssssi",
-                $_POST['room'],
-                $checkInDate_formatted,
-                $checkoutDate_formatted,
-                $_POST['user'],
-                $_POST['contactNumber'],
-                $_POST['extras'],
-                $_POST['review'],
-                $_POST['bookingID']
-            );
-
-            if (!$stmt->execute()) {
-                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
-            }
-
-            $_SESSION['alertList']["Booking Updated Successfully"] = array("type" => "success", "viewed" => 0);
-            die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
         }
     ),
     '/booking/delete' => array(
         'name' => 'Booking Delete',
         'function' => function () {
             $_POST = json_decode(file_get_contents("php://input"), true);
-            global $conn;
-            $query = "DELETE FROM `booking` WHERE `bookingID` = ?";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param("i", $_POST['bookingID']);
-            if (!$stmt->execute()) {
-                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
+            require_once 'includes/user.php';
+            $user = unserialize($_SESSION['user']);
+            $auth = $user->checkAuth();
+            if ($auth) {
+                global $conn;
+                $query = "DELETE FROM `booking` WHERE `bookingID` = ?";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("i", $_POST['bookingID']);
+                if (!$stmt->execute()) {
+                    die(json_encode(array('message' => 'error', 'error' => "Database Error")));
+                } else {
+                    $_SESSION['alertList']["Booking Deleted Successfully"] = array("type" => "success", "viewed" => 0);
+                    die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
+                }
             } else {
-                $_SESSION['alertList']["Booking Deleted Successfully"] = array("type" => "success", "viewed" => 0);
-                die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
+                die(json_encode(array('message' => 'error', 'error' => "Not Authorized")));
             }
         }
     ),

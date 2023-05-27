@@ -81,7 +81,8 @@ WHERE
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
             },
             body: JSON.stringify({ <?php echo "bookingID: " . $booking['bookingID'] ?> })
         });
