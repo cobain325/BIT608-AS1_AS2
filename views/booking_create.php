@@ -179,7 +179,7 @@ if ($user->getUserType() == "Guest") {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({<?php echo isEditing() ? "bookingID: " . $booking['bookingID'] . "," : "" ?> checkInDate : checkinDate.value, checkoutDate: checkoutDate.value})
+                body: JSON.stringify({<?php echo isEditing() ? "bookingID: " . $booking['bookingID'] . "," : "" ?> checkInDate : $('#checkinDate').datepicker("getDate"), checkoutDate: $('#checkoutDate').datepicker("getDate")})
         });
         const content = await response.json();
         if (content.message == "success") {
@@ -208,9 +208,10 @@ if ($user->getUserType() == "Guest") {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
                         },
-                        body: JSON.stringify({<?php echo isEditing() ? "bookingID: \"" . $booking['bookingID'] . "\", review: review.value, " : "" ?> user : "<?php echo $user->getUserID(); ?>", room: roomSelect.value, checkInDate: checkinDate.value, checkoutDate: checkoutDate.value, contactNumber: contactNumber.value, extras: extras.value})
+                        body: JSON.stringify({<?php echo isEditing() ? "bookingID: \"" . $booking['bookingID'] . "\", review: review.value, " : "" ?> user : "<?php echo $user->getUserID(); ?>", room: roomSelect.value, checkInDate: $('#checkinDate').datepicker("getDate"), checkoutDate: $('#checkoutDate').datepicker("getDate"), contactNumber: contactNumber.value, extras: extras.value})
                 });
                 const content = await response.json();
                 if (content.message == "success") {

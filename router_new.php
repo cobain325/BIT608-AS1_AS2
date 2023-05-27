@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
     $route = rtrim($_SERVER['REQUEST_URI'], '/');
     $postRequestsKeys = array_keys($postRequests);
     $routeParams = [];

@@ -70,21 +70,29 @@ $postRequests = array(
     '/booking/created' => array(
         'name' => 'Booking Create',
         'function' => function () {
+
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
-            $checkInDate = strtotime($_POST['checkInDate'] . " 14:00:00");
-            $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
-            $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
-            $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
+            require_once 'includes/user.php';
+            $user = unserialize($_SESSION['user']);
+            $auth = $user->checkAuth();
+            if ($auth) {
+                $checkInDate = strtotime($_POST['checkInDate']);
+                $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
+                $checkoutDate = strtotime($_POST['checkoutDate']);
+                $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
 
-            $query = "INSERT INTO `booking`(`room`, `checkIn`, `checkOut`, `customer`, `contactNumber`, `extras`) VALUES (?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param("ssssss", $_POST['room'], $checkInDate_formatted, $checkoutDate_formatted, $_POST['user'], $_POST['contactNumber'], $_POST['extras']);
-            if (!$stmt->execute()) {
-                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
+                $query = "INSERT INTO `booking`(`room`, `checkIn`, `checkOut`, `customer`, `contactNumber`, `extras`) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("ssssss", $_POST['room'], $checkInDate_formatted, $checkoutDate_formatted, $_POST['user'], $_POST['contactNumber'], $_POST['extras']);
+                if (!$stmt->execute()) {
+                    die(json_encode(array('message' => 'error', 'error' => "Database Error")));
+                } else {
+                    $_SESSION['alertList']["Booking Created Successfully"] = array("type" => "success", "viewed" => 0);
+                    die(json_encode(array('message' => 'success', 'booking' => mysqli_insert_id($conn))));
+                }
             } else {
-                $_SESSION['alertList']["Booking Created Successfully"] = array("type" => "success", "viewed" => 0);
-                die(json_encode(array('message' => 'success', 'booking' => mysqli_insert_id($conn))));
+                die(json_encode(array('message' => 'error', 'error' => "Not Authorized")));
             }
         }
     ),
@@ -93,9 +101,9 @@ $postRequests = array(
         'function' => function () {
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
-            $checkInDate = strtotime($_POST['checkInDate'] . " 14:00:00");
+            $checkInDate = strtotime($_POST['checkInDate']);
             $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
-            $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
+            $checkoutDate = strtotime($_POST['checkoutDate']);
             $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
 
             $stmt = $conn->prepare("UPDATE `booking` SET `room`=?, `checkIn`=?, `checkOut`=?, `customer`=?, `contactNumber`=?, `extras`=?, `review`=? WHERE `bookingID` = ?");
@@ -145,9 +153,9 @@ $postRequests = array(
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
 
-            $checkInDate = strtotime($_POST['checkInDate'] . " 14:00:00");
+            $checkInDate = strtotime($_POST['checkInDate']);
             $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
-            $checkoutDate = strtotime($_POST['checkoutDate'] . " 10:00:00");
+            $checkoutDate = strtotime($_POST['checkoutDate']);
             $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
 
             $editing = false;
@@ -204,7 +212,9 @@ $postRequests = array(
             $_POST = json_decode(file_get_contents("php://input"), true);
             $email = $_POST['email'];
             $password = $_POST['password'];
-            $user = new User($email, $password);
+            global $user;
+            $user = new User();
+            $user->authorize($email, $password);
             if ($user->getUserStatus() == null) {
                 $_SESSION['alertList']["Successfully logged in."] = array("type" => "success", "viewed" => 0);
                 die(json_encode(array('message' => 'success', 'user' => $user->getCustomerName(), 'token' => $user->getUserToken())));

@@ -43,8 +43,10 @@
         }
         include "./includes/user.php";
         if (isset($_SESSION['user'])) {
+            global $user;
             $user = unserialize($_SESSION['user']);
         } else {
+            global $user;
             $user = new User();
         }
         include "includes/header.php";

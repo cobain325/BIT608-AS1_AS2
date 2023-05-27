@@ -34,3 +34,5 @@ Options +ExecCGI +FollowSymLinks
 RewriteEngine On
 RewriteCond %{REQUEST_URI}  !(\.png|\.jpg|\.webp|\.gif|\.jpeg|\.zip|\.css|\.svg|\.js|\.pdf)$
 RewriteRule (.*) index.php [QSA,L]
+
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
