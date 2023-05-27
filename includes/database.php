@@ -10,10 +10,9 @@ $port = 3306;
 try {
     $conn = mysqli_init();
     mysqli_ssl_set($conn, NULL, NULL, $ca_certificate, NULL, NULL);
-    mysqli_real_connect($conn, $servername, $username, $password, $database, $port, MYSQLI_CLIENT_SSL);
+    mysqli_real_connect($conn, $host, $username, $password, $database, $port, MYSQLI_CLIENT_SSL);
 } catch (Exception $e) {
     echo "Service unavailable \n";
-    var_dump($e);
     exit;
 }
 if (!isset($_SESSION['alertList']["Database Connected Successfully"])) {
