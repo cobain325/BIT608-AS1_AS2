@@ -77,9 +77,9 @@ $postRequests = array(
             $user = unserialize($_SESSION['user']);
             $auth = $user->checkAuth();
             if ($auth) {
-                $checkInDate = strtotime($_POST['checkInDate']);
+                $checkInDate = strtotime(str_replace('/', '-',$_POST['checkInDate']));
                 $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
-                $checkoutDate = strtotime($_POST['checkoutDate']);
+                $checkoutDate = strtotime(str_replace('/', '-',$_POST['checkoutDate']));
                 $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
 
                 $query = "INSERT INTO `booking`(`room`, `checkIn`, `checkOut`, `customer`, `contactNumber`, `extras`) VALUES (?, ?, ?, ?, ?, ?)";
@@ -105,9 +105,9 @@ $postRequests = array(
             $user = unserialize($_SESSION['user']);
             $auth = $user->checkAuth();
             if ($auth) {
-                $checkInDate = strtotime($_POST['checkInDate']);
+                $checkInDate = strtotime(str_replace('/', '-',$_POST['checkInDate']));
                 $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
-                $checkoutDate = strtotime($_POST['checkoutDate']);
+                $checkoutDate = strtotime(str_replace('/', '-',$_POST['checkoutDate']));
                 $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
 
                 $stmt = $conn->prepare("UPDATE `booking` SET `room`=?, `checkIn`=?, `checkOut`=?, `customer`=?, `contactNumber`=?, `extras`=?, `review`=? WHERE `bookingID` = ?");
@@ -168,9 +168,9 @@ $postRequests = array(
             $_POST = json_decode(file_get_contents("php://input"), true);
             global $conn;
 
-            $checkInDate = strtotime($_POST['checkInDate']);
+            $checkInDate = strtotime(str_replace('/', '-',$_POST['checkInDate']));
             $checkInDate_formatted = date('Y-m-d H:i:s', $checkInDate);
-            $checkoutDate = strtotime($_POST['checkoutDate']);
+            $checkoutDate = strtotime(str_replace('/', '-',$_POST['checkoutDate']));
             $checkoutDate_formatted = date('Y-m-d H:i:s', $checkoutDate);
 
             $editing = false;
