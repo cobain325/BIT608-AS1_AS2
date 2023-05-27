@@ -10,24 +10,27 @@
         <div id="loginFailure" class="alert alert-danger d-none" role="alert">
             Invalid login details. Please try again.
         </div>
-        <p>Login in:</p>
+        <p>Login information:</p>
         <form role="form" id="login">
 
           <div class="form-group">
             <label for="email">Email Address</label>
-            <input class="form-control" type="email" id="email" autocomplete="email" required />
+            <input class="form-control" type="email" id="email" autocomplete="email" placeholder="Email Address" required />
             <div class="invalid-feedback">
               Please enter a valid email address.
             </div>
           </div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input class="form-control" type="password" id="password" autocomplete="current-password" required />
+            <input class="form-control" type="password" id="password" autocomplete="current-password" placeholder="Password" required />
             <div class="invalid-feedback">
               Please enter a password.
             </div>
           </div>
-          <button type="submit" class="btn btn-primary mt-3" data-bs-dismiss="modal">Login</button>
+          <button id="loginButton" type="submit" class="btn btn-primary mt-3">
+          <span id="loginSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            Login
+          </button>
         </form>
       </div>
     </div>
@@ -38,12 +41,19 @@
   const email = document.getElementById('email')
   const password = document.getElementById('password')
   const loginModal = new bootstrap.Modal('#loginModal')
+  const loginFailure = document.getElementById('loginFailure')
+  const loginSpinner = document.getElementById('loginSpinner')
+  const loginButton = document.getElementById('loginButton')
+
   form.addEventListener('submit', event => {
     event.preventDefault();
     if (!form.checkValidity()) {
       event.stopPropagation()
     } else {
       (async () => {
+        loginSpinner.classList.remove('d-none')
+        loginFailure.classList.add('d-none')
+        loginButton.disabled = true
         const response = await fetch('/login', {
           method: 'POST',
           headers: {
@@ -54,10 +64,15 @@
         });
         const content = await response.json();
         if (content.message == "success") {
+          loginModal.hide();
+          loginButton.disabled = false
+          loginSpinner.classList.add('d-none')
           location.href = location
         } else if(content.message == "error") {
+          loginButton.disabled = false
+          loginSpinner.classList.add('d-none')  
           loginModal.show();
-          document.getElementById('loginFailure').classList.remove('d-none')
+          loginFailure.classList.remove('d-none')
         }
       })()
     }

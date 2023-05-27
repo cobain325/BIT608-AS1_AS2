@@ -81,7 +81,7 @@ $postRequests = array(
             $stmt = $conn->prepare($query);
             $stmt->bind_param("ssssss", $_POST['room'], $checkInDate_formatted, $checkoutDate_formatted, $_POST['user'], $_POST['contactNumber'], $_POST['extras']);
             if (!$stmt->execute()) {
-                die(json_encode(array('message' => 'error', 'error' => $stmt->error)));
+                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
             } else {
                 $_SESSION['alertList']["Booking Created Successfully"] = array("type" => "success", "viewed" => 0);
                 die(json_encode(array('message' => 'success', 'booking' => mysqli_insert_id($conn))));
@@ -100,7 +100,7 @@ $postRequests = array(
 
             $stmt = $conn->prepare("UPDATE `booking` SET `room`=?, `checkIn`=?, `checkOut`=?, `customer`=?, `contactNumber`=?, `extras`=?, `review`=? WHERE `bookingID` = ?");
             if (!$stmt) {
-                die(json_encode(array('message' => 'error', 'error' => $conn->error)));
+                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
             }
 
             $stmt->bind_param(
@@ -116,7 +116,7 @@ $postRequests = array(
             );
 
             if (!$stmt->execute()) {
-                die(json_encode(array('message' => 'error', 'error' => $stmt->error)));
+                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
             }
 
             $_SESSION['alertList']["Booking Updated Successfully"] = array("type" => "success", "viewed" => 0);
@@ -132,7 +132,7 @@ $postRequests = array(
             $stmt = $conn->prepare($query);
             $stmt->bind_param("i", $_POST['bookingID']);
             if (!$stmt->execute()) {
-                die(json_encode(array('message' => 'error', 'error' => $stmt->error)));
+                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
             } else {
                 $_SESSION['alertList']["Booking Deleted Successfully"] = array("type" => "success", "viewed" => 0);
                 die(json_encode(array('message' => 'success', 'booking' => $_POST['bookingID'])));
@@ -183,7 +183,7 @@ $postRequests = array(
             $stmt = $conn->prepare($query);
 
             if (!$stmt) {
-                die(json_encode(array('message' => 'error', 'error' => $stmt->error)));
+                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
             }
 
             $stmt->bind_param($typeDefinition, ...$parameters);
@@ -191,7 +191,7 @@ $postRequests = array(
             $result = $stmt->get_result();
 
             if (!$result) {
-                die(json_encode(array('message' => 'error', 'error' => $conn->error)));
+                die(json_encode(array('message' => 'error', 'error' => "Database Error")));
             } else {
                 die(json_encode(array('message' => 'success', 'result' => $result->fetch_all())));
             }

@@ -3,7 +3,6 @@ TODO:
 Customer Registration
 
 KNOWN ISSUES:
-Date formatting on jquery datepicker.
 Past bookings can be edited.
 
 NOTES:

@@ -22,7 +22,7 @@ class User
             $query = "SELECT * FROM customer WHERE email = ?";
             $stmt = $conn->prepare($query);
             if (!$stmt) {
-                $this->status = $stmt->error;
+                $this->status = "Database Error"; //$stmt->error;
             }
             $stmt->bind_param("s", $email);
             $stmt->execute();
@@ -66,7 +66,7 @@ class User
                     $this->status = 'Invalid Password';
                 }
             } else {
-                $this->status = $conn->error;
+                $this->status = "User not found";
             }
         }
     }
