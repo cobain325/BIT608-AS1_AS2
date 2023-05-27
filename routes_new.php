@@ -207,7 +207,7 @@ $postRequests = array(
             $user = new User($email, $password);
             if ($user->getUserStatus() == null) {
                 $_SESSION['alertList']["Successfully logged in."] = array("type" => "success", "viewed" => 0);
-                die(json_encode(array('message' => 'success', 'user' => $user->getCustomerName())));
+                die(json_encode(array('message' => 'success', 'user' => $user->getCustomerName(), 'token' => $user->getUserToken())));
             } else {
                 die(json_encode(array('message' => 'error', 'user' => $user->getUserStatus())));
             }

@@ -3,6 +3,7 @@ TODO:
 Customer Registration
 
 KNOWN ISSUES:
+Post actions have no authorization.
 Past bookings can be edited.
 
 NOTES:

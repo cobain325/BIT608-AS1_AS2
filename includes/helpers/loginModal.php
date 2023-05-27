@@ -67,6 +67,7 @@
           loginModal.hide();
           loginButton.disabled = false
           loginSpinner.classList.add('d-none')
+          sessionStorage.setItem('token', content.token)
           location.href = location
         } else if(content.message == "error") {
           loginButton.disabled = false
