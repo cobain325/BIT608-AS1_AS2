@@ -31,10 +31,9 @@ class User
             if ($result && $result->num_rows > 0) {
                 $user = $result->fetch_assoc();
                  if (password_verify($password, $user['password'])) {
-                    require_once "helpers/admins.php";
-                    global $admins;
                     $this->customerID = $user['customerID'];
-                    if (in_array($user['customerID'], $admins)) {
+                    require_once "helpers/admins.php";
+                    if (in_array((int)$user['customerID'], $admins)) {
                         $this->userType = "Admin";
                     } else {
                         $this->userType = "Customer";
