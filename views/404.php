@@ -1,3 +1,3 @@
-<div class="card-text">
+<div class="card-body">
     <strong>Page not found.</strong>
 </div>
