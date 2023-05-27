@@ -1,10 +1,9 @@
-<!--
-    All routes for website are defined here.
-
-    $getRequests contains all the GET requests.
-    $postRequests contains all the POST requests.
--->
 <?php
+//All routes for website are defined here.
+
+//$getRequests contains all the GET requests.
+//$postRequests contains all the POST requests.
+
 $getRequests = array(
     '/' => array(
         'name' => 'Home',
