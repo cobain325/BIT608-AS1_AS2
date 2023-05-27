@@ -1,3 +1,9 @@
+<!--
+    All routes for website are defined here.
+
+    $getRequests contains all the GET requests.
+    $postRequests contains all the POST requests.
+-->
 <?php
 $getRequests = array(
     '/' => array(
